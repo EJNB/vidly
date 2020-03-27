@@ -5,12 +5,17 @@ const ListGroup = props => {
     return (
         <ul className="list-group">
             {genres.map(genre=>
-                <li key={genre._id} className="list-group-item" onClick={() => itemsSelected(genre)}>
-                    {genre.name}
+                <li key={genre[valueProperty]} className="list-group-item" onClick={() => itemsSelected(genre)}>
+                    {genre.name[textProperty]}
                 </li>
             )}
         </ul>
     );
+};
+
+ListGroup.defaultPorps = {
+    textProperty: 'name',
+    valueProperty: '_id'
 };
 
 export default ListGroup;
