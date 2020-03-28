@@ -9,7 +9,7 @@ const Like = props => {
             className={classes}
             aria-hidden="true"
             style={{cursor: 'pointer'}}
-        ></i>
+        />
     );
 };
 
