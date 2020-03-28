@@ -4,7 +4,8 @@ import {getGenres} from "../services/fakeGenreService";
 import Pagination from './common/pagination';
 import paginate from '../utils/paginate';
 import ListGroup from "./common/listGroup";
-import MovieTable from "./moviesTable";
+import MoviesTable from "./moviesTable";
+import _ from 'lodash';
 
 class Movies extends React.Component {
     state = {
@@ -12,6 +13,7 @@ class Movies extends React.Component {
         genres: [],
         currentPage: 1,
         pageSize: 4,
+        sortColumn: {path: 'title', order: 'asc' }
     };
 
     componentDidMount() {
@@ -41,16 +43,22 @@ class Movies extends React.Component {
         this.setState({selectedGenre: genre, currentPage: 1})
     };
 
+    handleSort = sortColumn => {
+        this.setState({sortColumn});
+    };
+
     render() {
         const {length: count} = this.state.movies;
-        const {currentPage, pageSize, movies: allMovies, genres, selectedGenre} = this.state;
+        const {currentPage, pageSize, movies: allMovies, genres, selectedGenre, sortColumn} = this.state;
 
         if (!count) return <p>There are not movies in the stock</p>;
 
         const filtered = selectedGenre && selectedGenre._id
             ? allMovies.filter(m => m.genre._id === selectedGenre._id)
             : allMovies;
-        const movies = paginate(filtered, currentPage, pageSize);
+
+        const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+        const movies = paginate(sorted, currentPage, pageSize);
         return (
             <div className="row">
                 <div className="col-3">
@@ -62,10 +70,12 @@ class Movies extends React.Component {
                 </div>
                 <div className="col">
                     <p>There are {filtered.length} movies in the stock.</p>
-                    <MovieTable
+                    <MoviesTable
                         movies={movies}
                         onDelete={this.handleDelete}
                         onLike={this.handleLike}
+                        sortColumn={sortColumn}
+                        onSort={this.handleSort}
                     />
                     <Pagination
                         itemsCount={filtered.length}
