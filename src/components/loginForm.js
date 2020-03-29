@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
 
 class LoginForm extends Component {
-    username = React.createRef();
-
-    // componentDidMount() {
-    //     this.username.current.focus();
-    // }
+    state = {
+        account: {username: '',password: ''}
+    };
 
     handleSubmit = e => {
         e.preventDefault();
@@ -13,7 +11,14 @@ class LoginForm extends Component {
         console.log('submitted');
     };
 
+    handleChange = ({currentTarget: input}) => {
+        const account = {...this.state.account };
+        account[input.name] = input.value;
+        this.setState({account});
+    };
+
     render() {
+        const {account} = this.state;
         return (
             <div>
                 <h1>Login</h1>
@@ -24,7 +29,9 @@ class LoginForm extends Component {
                             autoFocus
                             type="text"
                             id="username"
-                            ref={this.username}
+                            name="username"
+                            value={account.username}
+                            onChange={this.handleChange}
                             className="form-control"
                             aria-describedby="emailHelp"
                         />
@@ -33,7 +40,14 @@ class LoginForm extends Component {
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
-                        <input type="password" className="form-control" id="password"/>
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            className="form-control"
+                            onChange={this.handleChange}
+                            value={account.pasword}
+                        />
                     </div>
                     {/*<div className="form-group form-check">*/}
                     {/*    <input type="checkbox" className="form-check-input" id="exampleCheck1">*/}
