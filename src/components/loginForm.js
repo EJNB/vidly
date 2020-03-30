@@ -37,14 +37,11 @@ class LoginForm extends Component {
     };
 
     validateProperty = ({name, value}) => {
-        if (name === 'username') {
-            if (value.trim() === '') return 'Username is required.';
-            //.....
-        }
-        if (name === 'password') {
-            if (value.trim() === '') return 'Password is required.'
-            //...
-        }
+        // computed property
+        const obj = {[name]: value};
+        const schema = {[name]: this.schema[name]};
+        const {error} = Joi.validate(obj, schema);
+        return error ? error.details[0].message : null;
     };
 
     handleChange = ({currentTarget: input}) => {
@@ -78,7 +75,7 @@ class LoginForm extends Component {
                         value={account.password}
                         onChange={this.handleChange}
                     />
-                    <button type="submit" className="btn btn-primary">Submit</button>
+                    <button disabled={this.validate()} type="submit" className="btn btn-primary">Submit</button>
                 </form>
             </div>
         );
