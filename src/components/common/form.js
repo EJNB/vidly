@@ -18,13 +18,11 @@ class Form extends Component {
 
     validate = ()=> {
         const options = {abortEarly: false};
-        const {error} = Joi.validate(this.state.account, this.schema, options);
+        const {error} = Joi.validate(this.state.data, this.schema, options);
         if(!error) return null;
 
         const errors = {};
-        for(let item of error.details) {
-            errors[item.path[0]] = item.message;
-        }
+        for(let item of error.details) errors[item.path[0]] = item.message;
         return errors;
     };
 
@@ -39,6 +37,18 @@ class Form extends Component {
 
     renderButton = (label)=> {
         return <button disabled={this.validate()} className="btn btn-primary">{label}</button>
+    };
+
+    handleChange = ({currentTarget: input}) => {
+        const errors = {...this.state.errors};
+        const errorMessage = this.validateProperty(input);
+        if (errorMessage) errors[input.name] = errorMessage;
+        else delete errors[input.name];
+
+        const data = {...this.state.data };
+        data[input.name] = input.value;
+
+        this.setState({data, errors});
     };
 
     renderInput = (name, label, type= "text")=> {
