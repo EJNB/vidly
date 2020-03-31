@@ -12,10 +12,12 @@
     "joi-browser": "^13.4.0",
     "lodash": "^4.17.15",
     "prop-types": "^15.7.2",
+    "raven-js": "^3.27.2",
     "react": "^16.13.0",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.0"
+    "react-scripts": "3.4.0",
+    "react-toastify": "^5.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
