@@ -1,19 +1,19 @@
 import React from "react";
 import Form from "./common/form";
 import Joi from "joi-browser";
-import {getGenres} from "../services/fakeGenreService";
-import {getMovie, saveMovie} from "../services/fakeMovieService";
+import {getGenres} from "../services/genreService";
+import {getMovie, saveMovie} from "../services/movieService";
 
 class MovieForm extends Form {
     state = {
-       data: {
-           title: "",
-           genreId: "",
-           numberInStock: "",
-           dailyRentalRate: ""
-       },
+        data: {
+            title: "",
+            genreId: "",
+            numberInStock: "",
+            dailyRentalRate: ""
+        },
         genres: [],
-       errors: {},
+        errors: {},
     };
 
     schema = {
@@ -21,24 +21,34 @@ class MovieForm extends Form {
         title: Joi.string().required().label("Title"),
         genreId: Joi.string().required().label("Genre"),
         numberInStock: Joi.number().required().min(0).max(100).label("Number in stock."),
-        dailyRentalRate: Joi.string().required().min(0).max(100).label("Daily Rental Rate"),
+        dailyRentalRate: Joi.number().required().min(0).max(100).label("Daily Rental Rate"),
     };
 
-    componentDidMount() {
+    async populateGenres() {
         // Firt we get genres and then update the state.
-        const genres = getGenres();
+        const {data: genres} = await getGenres();
         this.setState({genres});
+    }
 
-        // Next would read id parameter in the route.
-        const movieId = this.props.match.params.id;
-        if(movieId === 'new') return;
+    async populateMovie() {
+        try {
+            // Next would read id parameter in the route.
+            const movieId = this.props.match.params.id;
+            if (movieId === 'new') return;
 
-        // If id is not new. Get the movie by id.
-        const movie = getMovie(movieId);
-        // If is not exit tha movie redirect to not found page.
-        if (!movie) return this.props.history.replace('/not-found');
+            // If id is not new. Get the movie by id.
+            const {data: movie} = await getMovie(movieId);
+            this.setState({data: this.mapToViewModel(movie)});
+        } catch (ex) {
+            // If is not exit tha movie redirect to not found page.
+            if (ex.response && ex.response.status === 404)
+                return this.props.history.replace('/not-found');
+        }
 
-        this.setState({data: this.mapToViewModel(movie)})
+    }
+    async componentDidMount() {
+        await this.populateGenres();
+        await this.populateMovie();
     }
 
     mapToViewModel(movie) {
@@ -51,12 +61,11 @@ class MovieForm extends Form {
         }
     }
 
-    doSubmit = () => {
+    doSubmit = async () => {
         console.log("Submitted");
-        saveMovie(this.state.data);
+        await saveMovie(this.state.data);
         this.props.history.push('/movies');
     };
-
 
     render() {
         return (
@@ -74,6 +83,7 @@ class MovieForm extends Form {
     }
 
 }
+
 export default MovieForm;
 
 /*
