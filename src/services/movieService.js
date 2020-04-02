@@ -1,5 +1,5 @@
 import http from "./httpService";
-import {apiUrl} from '../config'
+import {apiUrl} from '../config';
 
 const apiEndpoint= `${apiUrl}/movies`;
 
