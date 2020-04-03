@@ -17,7 +17,6 @@ class RegisterForm extends Form {
 
     doSubmit = async () => {
         try {
-            console.log('enviando');
             await userService.saveUser(this.state.data);
         }
         catch (ex) {
