@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import Movies from "./components/movies";
 import NavBar from "./components/navbar";
-import jwtDecode from 'jwt-decode';
 import {Route, Switch, Redirect} from "react-router-dom";
 import Customers from "./components/customers";
 import Rentals from "./components/rentals";
@@ -11,6 +10,8 @@ import LoginForm from "./components/loginForm";
 import RegisterForm from "./components/registerForm";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
+import Logout from "./components/logout";
+import auth from "./services/authService";
 // import './App.css';
 
 class App extends Component {
@@ -19,11 +20,8 @@ class App extends Component {
     /* This method called only once during the life cycle on our application,
     * becouse where app component is mounted once and then whenever, we change the state is re-render*/
     componentDidMount() {
-        try {
-            const jwt = localStorage.getItem('token');
-            const user = jwtDecode(jwt);
-            this.setState({user});
-        } catch (e) {}
+        const user = auth.getCurrentUser();
+        this.setState({user});
     }
 
     render() {
@@ -34,6 +32,7 @@ class App extends Component {
                 <main className="container">
                     <Switch>
                         <Route path="/login" component={LoginForm}/>
+                        <Route path="/logout" component={Logout}/>
                         <Route path="/register" component={RegisterForm}/>
                         <Route path="/movies/:id" component={MovieForm}/>
                         <Route path="/movies" component={Movies}/>
