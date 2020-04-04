@@ -18,7 +18,7 @@ class Movies extends React.Component {
         pageSize: 4,
         searchQuery: "",
         selectedGenre: null,
-        sortColumn: {path: 'title', order: 'asc' }
+        sortColumn: {path: 'title', order: 'asc'}
     };
 
     async componentDidMount() {
@@ -66,7 +66,7 @@ class Movies extends React.Component {
         this.setState({searchQuery: query, selectedGenre: null, currentPage: 1});
     };
 
-    getPageData= () => {
+    getPageData = () => {
         const {
             currentPage,
             pageSize,
@@ -77,10 +77,10 @@ class Movies extends React.Component {
         } = this.state;
 
         let filtered = allMovies;
-        if(searchQuery)
-            filtered = allMovies.filter(m=> m.title.toLowerCase().startsWith(searchQuery.toLowerCase()) );
+        if (searchQuery)
+            filtered = allMovies.filter(m => m.title.toLowerCase().startsWith(searchQuery.toLowerCase()));
         else if (selectedGenre && selectedGenre._id)
-            filtered = allMovies.filter(m=> m.genre._id === selectedGenre._id);
+            filtered = allMovies.filter(m => m.genre._id === selectedGenre._id);
 
         const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
         const movies = paginate(sorted, currentPage, pageSize);
@@ -99,6 +99,8 @@ class Movies extends React.Component {
             searchQuery
         } = this.state;
 
+        const {user} = this.props;
+
         if (!count) return <p>There are not movies in the stock</p>;
 
         const {totalCount, data: movies} = this.getPageData();
@@ -113,13 +115,15 @@ class Movies extends React.Component {
                     />
                 </div>
                 <div className="col">
-                    <Link
-                        to="/movies/new"
-                        className="btn btn-outline-primary"
-                        style={{marginBottom: 20}}
-                    >
-                        New Movie
-                    </Link>
+                    {user && (
+                        <Link
+                            to="/movies/new"
+                            className="btn btn-outline-primary"
+                            style={{marginBottom: 20}}
+                        >
+                            New Movie
+                        </Link>
+                    )}
                     <p>There are {totalCount} movies in the stock.</p>
                     <SearchBox value={searchQuery} onChange={this.handleSearch}/>
                     <MoviesTable
